@@ -81,7 +81,8 @@ class CanTmclInterface(TmclInterface):
             if msg.arbitration_id != host_id:
                 # The filter shouldn't let wrong messages through.
                 # This is just a sanity check
-                self.logger.warning("Received a CAN Frame with unexpected ID (received: %d; expected: %d)", msg.arbitration_id, host_id)
+                #self.logger.warning("Received a CAN Frame with unexpected ID (received: %d; expected: %d)", msg.arbitration_id, host_id)
+                pass
             else:
                 break
 
