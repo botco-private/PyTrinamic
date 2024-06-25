@@ -67,20 +67,23 @@ class CanTmclInterface(TmclInterface):
         """
         del module_id
 
-        try:
-            msg = self._connection.recv(timeout=self._timeout_s)
-        except can.CanError as e:
-            raise ConnectionError(
-                f"Failed to receive a TMCL message from {self.__class__.__name__} (channel {str(self._channel)})"
-            ) from e
+        while True:
+            try:
+                msg = self._connection.recv(timeout=self._timeout_s)
+            except can.CanError as e:
+                raise ConnectionError(
+                    f"Failed to receive a TMCL message from {self.__class__.__name__} (channel {str(self._channel)})"
+                ) from e
 
-        if not msg:
-            raise ConnectionError(f"Recv timed out ({self.__class__.__name__}, on channel {str(self._channel)})")
+            if not msg:
+                raise ConnectionError(f"Recv timed out ({self.__class__.__name__}, on channel {str(self._channel)})")
 
-        if msg.arbitration_id != host_id:
-            # The filter shouldn't let wrong messages through.
-            # This is just a sanity check
-            self.logger.warning("Received a CAN Frame with unexpected ID (received: %d; expected: %d)", msg.arbitration_id, host_id)
+            if msg.arbitration_id != host_id:
+                # The filter shouldn't let wrong messages through.
+                # This is just a sanity check
+                self.logger.warning("Received a CAN Frame with unexpected ID (received: %d; expected: %d)", msg.arbitration_id, host_id)
+            else:
+                break
 
         return bytearray([msg.arbitration_id]) + msg.data
 
